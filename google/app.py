@@ -23,6 +23,7 @@ headers = [
     "Custom parameter",
 ]
 title_regex = re.compile(r".*【(.*)】")
+address_master = master.Address()
 
 
 def convert(filepath):
@@ -95,7 +96,8 @@ def calc_keyword(row):
 
 
 def calc_address(row):
-    return ", ".join([row["市区町村"], master.Address.get(row["検索用　都道府県"]), "日本"])
+    global address_master
+    return ", ".join([row["市区町村"], address_master.get(row["検索用　都道府県"]), "日本"])
 
 
 def calc_similar_id(row):
