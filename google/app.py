@@ -5,34 +5,33 @@ import sys
 import master
 
 
-headers = [
-    "Job ID",
-    "Location ID",
-    "Title",
-    "Final URL",
-    "Final mobile URL",
-    "Image URL",
-    "Subtitle",
-    "Description",
-    "Salary",
-    "Category",
-    "Contextual keywords",
-    "Address",
-    "Similar Job IDs",
-    "Tracking template",
-    "Custom parameter",
-]
 title_regex = re.compile(r".*【(.*)】")
 address_master = master.Address()
 
 
 def convert(filepath):
-    print(",".join(headers))
+    yield [
+        "Job ID",
+        "Location ID",
+        "Title",
+        "Final URL",
+        "Final mobile URL",
+        "Image URL",
+        "Subtitle",
+        "Description",
+        "Salary",
+        "Category",
+        "Contextual keywords",
+        "Address",
+        "Similar Job IDs",
+        "Tracking template",
+        "Custom parameter",
+    ]
     with open(filepath, mode="r", encoding="cp932") as f:
         reader = csv.DictReader(f)
         for row in reader:
             job_id = row["お仕事No"]
-            location_id = row["検索用　都道府県"]
+            location_id = row["都道府県"]
             title = calc_title(row)
             final_url = calc_url(row)
             final_mobile_url = ""
@@ -46,7 +45,7 @@ def convert(filepath):
             similar_id = calc_similar_id(row)
             tracking_template = ""
             custom_parameter = calc_custom_Parameter(row)
-            print("\"" + "\",\"".join([
+            yield [
                 job_id,
                 location_id,
                 title,
@@ -62,7 +61,7 @@ def convert(filepath):
                 similar_id,
                 tracking_template,
                 custom_parameter,
-            ]) + "\"")
+            ]
 
 
 def calc_title(row):
@@ -75,7 +74,7 @@ def calc_title(row):
 
 
 def calc_subtitle(row):
-    return row["サブキャッチ"].split("\n")[0]
+    return row["サブキャッチ"].split("\n")[0].split('<br>')[0]
 
 
 def calc_description(row):
@@ -97,7 +96,7 @@ def calc_keyword(row):
 
 def calc_address(row):
     global address_master
-    return ", ".join([row["市区町村"], address_master.get(row["検索用　都道府県"]), "日本"])
+    return ", ".join([row["市区町村"], address_master.get(row["都道府県"]), "日本"])
 
 
 def calc_similar_id(row):
@@ -113,7 +112,3 @@ def calc_custom_Parameter(row):
 
 def calc_salary(text):
     return text.split("<br")[0].split("\n")[0]
-
-
-if __name__ == "__main__":
-    convert(sys.argv[1])
