@@ -23,12 +23,13 @@ def main():
             converted_file = eval("{}('{}')".format(sys.argv[1], 'temp'))
             upload_file(converted_file, '/japan_data_vision/{}'.format(converted_file))
         except NameError:
+            print('target "{}" not defined.'.format(sys.argv[1]))
             return help()
         finally:
-            if os.path.exists(converted_file):
-                os.remove(converted_file)
             if os.path.exists('temp'):
                 os.remove('temp')
+            if os.path.exists(converted_file):
+                os.remove(converted_file)
 
 
 def download_file(ftp_path, download_path):
@@ -78,7 +79,10 @@ def facebook(filepath):
 def line(filepath):
     global not_found_message
     try:
-        ln.convert(filepath)
+        filename = 'feeddata_line.csv'
+        with open(filename, 'w', encoding='utf-8', newline='') as w:
+            csv.writer(w).writerows(ln.convert(filepath))
+        return filename
     except FileNotFoundError:
         print(not_found_message.format(filepath))
 
