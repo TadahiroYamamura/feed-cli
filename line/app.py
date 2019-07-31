@@ -3,9 +3,11 @@ import re
 import sys
 
 import master
+import tool
 
 
 title_regex = re.compile(r".*【(.*)】")
+salary_regex = re.compile(r"[\d,]+")
 address_master = master.Address()
 
 
@@ -31,8 +33,8 @@ def convert(filepath):
     with open(filepath, mode="r", encoding="cp932") as f:
         for row in csv.DictReader(f):
             job_id = row["お仕事No"]
-            title = calc_title(row)
-            description = calc_description(row)
+            title = tool.take(calc_title(row), 20)
+            description = tool.take(calc_description(row), 40)
             analyze_title = row["都道府県"]
             analyze_description = address_master.get(row["都道府県"]) + "の求人"
             image_link = row["画像ファイル名"]
@@ -86,4 +88,10 @@ def calc_url(row):
 
 
 def calc_salary(text):
-    return text.split("<br")[0].split("\n")[0]
+    global salary_regex
+    salary_text = text.split("<br")[0].split("\n")[0]
+    m = salary_regex.search(salary_text)
+    if m is None:
+        return ''
+    else:
+        return m[0].replace(",", "")

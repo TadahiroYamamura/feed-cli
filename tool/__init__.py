@@ -1,0 +1,1 @@
+from tool.len import len, take
