@@ -40,7 +40,7 @@ def convert(filepath):
             description = calc_description(row)
             final_url = calc_url(row)
             image_url = row["画像ファイル名"]
-            category = row["職種"]
+            category = ''
             salary = calc_salary(row["給与"])
             yield [
                 job_id,
