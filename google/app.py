@@ -7,6 +7,7 @@ import master
 
 title_regex = re.compile(r".*【(.*)】")
 address_master = master.Address()
+condition_master = master.Condition()
 
 
 def convert(filepath):
@@ -65,12 +66,9 @@ def convert(filepath):
 
 
 def calc_title(row):
-    global title_regex
-    title_match = title_regex.match(row["メインキャッチ"])
-    if (title_match is None):
-        return row["メインキャッチ"]
-    else:
-        return title_match.group(1)
+    global condition_master
+    condition_list = row["条件"].split(',')
+    return '、'.join(list(map(lambda x: condition_master.get(x), filter(lambda x: x, condition_list)))[:2])
 
 
 def calc_subtitle(row):
@@ -78,11 +76,12 @@ def calc_subtitle(row):
 
 
 def calc_description(row):
-    sp = row["PR文章"].split("\n")
-    line = sp[min([len(sp) - 1, 1])]
-    sp = line.split("<br>")
-    line = sp[min([len(sp) - 1, 1])]
-    return line
+    global title_regex
+    title_match = title_regex.match(row["メインキャッチ"])
+    if (title_match is None):
+        return row["メインキャッチ"]
+    else:
+        return title_match.group(1)
 
 
 def calc_url(row):
