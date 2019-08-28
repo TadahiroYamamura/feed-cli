@@ -67,8 +67,8 @@ def convert(filepath):
 
 def calc_title(row):
     global condition_master
-    condition_list = row["条件"]
-    return '、'.join(list(map(lambda x: condition_master.get(x), condition_list))[:2])
+    condition_list = row["条件"].split(',')
+    return '、'.join(list(map(lambda x: condition_master.get(x), filter(lambda x: x, condition_list)))[:2])
 
 
 def calc_description(row):
