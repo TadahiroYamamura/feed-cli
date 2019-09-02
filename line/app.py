@@ -7,6 +7,7 @@ import tool
 
 
 title_regex = re.compile(r".*【(.*)】")
+holiday_regex = re.compile(r"年間休日\D*(\d+)\D*", re.MULTILINE)
 salary_regex = re.compile(r"[\d,]+")
 address_master = master.Address()
 condition_master = master.Condition()
@@ -67,18 +68,16 @@ def convert(filepath):
 
 
 def calc_title(row):
-    global condition_master
-    condition_list = row["条件"].split(',')
-    return '、'.join(list(map(lambda x: condition_master.get(x), filter(lambda x: x, condition_list)))[:2])
-
-
-def calc_description(row):
     global title_regex
     title_match = title_regex.match(row["メインキャッチ"])
     if (title_match is None):
         return row["メインキャッチ"]
     else:
         return title_match.group(1)
+
+
+def calc_description(row):
+    return row["サブキャッチ"].split("\n")[0].split('<br>')[0]
 
 
 def calc_url(row):

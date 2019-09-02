@@ -6,6 +6,7 @@ import master
 
 
 title_regex = re.compile(r".*【(.*)】")
+holiday_regex = re.compile(r"年間休日\D*(\d+)\D*", re.MULTILINE)
 address_master = master.Address()
 condition_master = master.Condition()
 
@@ -66,22 +67,38 @@ def convert(filepath):
 
 
 def calc_title(row):
-    global condition_master
-    condition_list = row["条件"].split(',')
-    return '、'.join(list(map(lambda x: condition_master.get(x), filter(lambda x: x, condition_list)))[:2])
-
-
-def calc_subtitle(row):
-    return row["サブキャッチ"].split("\n")[0].split('<br>')[0]
-
-
-def calc_description(row):
     global title_regex
     title_match = title_regex.match(row["メインキャッチ"])
     if (title_match is None):
         return row["メインキャッチ"]
     else:
         return title_match.group(1)
+
+
+def calc_subtitle(row):
+    subtitle_elements = []
+
+    # holiday
+    global holiday_regex
+    holiday_match = holiday_regex.search(row["休日休暇"])
+    if (holiday_match is not None):
+      subtitle_elements.append('年休'+holiday_match.group(1)+'日')
+
+    # conditions
+    global condition_master
+    condition_list = row["条件"].split(',')
+    condition_list = filter(lambda x: x, condition_list)
+    condition_list = filter(lambda x: int(x) in [7, 12, 11, 8], condition_list)
+    condition_list = map(lambda x: condition_master.get(x), condition_list)
+    for condition in condition_list:
+      subtitle_elements.append(condition)
+
+    # result
+    return '、'.join(subtitle_elements)
+
+
+def calc_description(row):
+    return row["サブキャッチ"].split("\n")[0].split('<br>')[0]
 
 
 def calc_url(row):
