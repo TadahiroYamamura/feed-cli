@@ -76,7 +76,27 @@ def calc_title(row):
 
 
 def calc_description(row):
-    return row["サブキャッチ"].split("\n")[0].split('<br>')[0]
+    subtitle_elements = []
+
+    # holiday
+    global holiday_regex
+    holiday_match = holiday_regex.search(row["休日休暇"])
+    if (holiday_match is not None):
+      holiday_count = holiday_match.group(1)
+      if int(holiday_count) > 119:
+        subtitle_elements.append('年休'+holiday_count+'日')
+
+    # conditions
+    global condition_master
+    condition_list = row["条件"].split(',')
+    condition_list = filter(lambda x: x, condition_list)
+    condition_list = filter(lambda x: int(x) in [7, 12, 11, 8], condition_list)
+    condition_list = map(lambda x: condition_master.get(x), condition_list)
+    for condition in condition_list:
+      subtitle_elements.append(condition)
+
+    # result
+    return '、'.join(subtitle_elements)
 
 
 def calc_url(row):

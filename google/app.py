@@ -76,13 +76,20 @@ def calc_title(row):
 
 
 def calc_subtitle(row):
+  global address_master
+  return address_master.get(row["都道府県"]) + row["市区町村"]
+
+
+def calc_description(row):
     subtitle_elements = []
 
     # holiday
     global holiday_regex
     holiday_match = holiday_regex.search(row["休日休暇"])
     if (holiday_match is not None):
-      subtitle_elements.append('年休'+holiday_match.group(1)+'日')
+      holiday_count = holiday_match.group(1)
+      if int(holiday_count) > 119:
+        subtitle_elements.append('年休'+holiday_count+'日')
 
     # conditions
     global condition_master
@@ -95,10 +102,6 @@ def calc_subtitle(row):
 
     # result
     return '、'.join(subtitle_elements)
-
-
-def calc_description(row):
-    return row["サブキャッチ"].split("\n")[0].split('<br>')[0]
 
 
 def calc_url(row):
