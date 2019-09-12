@@ -101,7 +101,7 @@ def calc_description(row):
 
 
 def calc_url(row):
-    return "https://jobpark.works/recruit/detail/{}/".format(row["お仕事ID"])
+    return "https://jobpark.works/recruit/detail/{}/?utm_source=line&utm_medium=social&utm_campaign=rt".format(row["お仕事ID"])
     return ";".join(ite)
 
 
