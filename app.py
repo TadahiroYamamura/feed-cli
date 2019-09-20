@@ -71,7 +71,10 @@ def yahoo(filepath):
 def facebook(filepath):
     global not_found_message
     try:
-        fb.convert(filepath)
+        filename = 'feeddata_facebook.csv'
+        with open(filename, 'w', encoding='utf-8', newline='') as w:
+            csv.writer(w).writerows(fb.convert(filepath))
+        return filename
     except FileNotFoundError:
         print(not_found_message.format(filepath))
 
